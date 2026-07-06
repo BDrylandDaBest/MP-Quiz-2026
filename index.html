@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Canadian MP Quiz</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    text-align:center;
+    padding:20px;
+}
+
+img{
+    max-width:300px;
+    max-height:350px;
+}
+
+button{
+    padding:10px;
+    margin:5px;
+}
+
+input{
+    padding:10px;
+    margin:5px;
+}
+</style>
+
+"></script>
+</head>
+
+<body>
+
+<h1>Canadian MP Quiz</h1>
+
+<div id="menu">
+
+<h2>Last Name Quiz</h2>
+
+<button onclick="startQuiz('lastname',false)">
+All MPs
+</button>
+
+<button onclick="startQuiz('lastname',true)">
+20 Random MPs
+</button>
+
+<h2>Party Quiz</h2>
+
+<button onclick="startQuiz('party',false)">
+All MPs
+</button>
+
+<button onclick="startQuiz('party',true)">
+20 Random MPs
+</button>
+
+</div>
+
+<div id="quiz" style="display:none">
+
+<h2 id="questionTitle"></h2>
+
+<img id="photo">
+
+<div id="nameDisplay"></div>
+
+<input id="answer">
+
+<br>
+
+<button onclick="submitAnswer()">
+Submit
+</button>
+
+<p id="progress"></p>
+
+</div>
+
+<div id="results" style="display:none">
+
+<h2>Quiz Complete</h2>
+
+<p id="score"></p>
+
+<button onclick="location.reload()">
+Play Again
+</button>
+
+</div>
+
+<script>
+
+let quizData=[];
+let current=0;
+let score=0;
+let mode="lastname";
+
+function shuffle(a){
+ return [...a].sort(()=>Math.random()-0.5);
+}
+
+function startQuiz(selectedMode,random20){
+
+ mode=selectedMode;
+
+ quizData=shuffle(MPs);
+
+ if(random20){
+   quizData=quizData.slice(0,20);
+ }
+
+ current=0;
+ score=0;
+
+ document.getElementById("menu").style.display="none";
+ document.getElementById("quiz").style.display="block";
+
+ loadQuestion();
+}
+
+function loadQuestion(){
+
+ let mp=quizData[current];
+
+ document.getElementById("photo").src=mp.photo;
+
+ if(mode==="lastname"){
+   document.getElementById("questionTitle").textContent=
+   "Type the last name";
+   document.getElementById("nameDisplay").textContent="";
+ }
+ else{
+
+   document.getElementById("questionTitle").textContent=
+   "Type the party";
+
+   document.getElementById("nameDisplay").textContent=
+   mp.firstName + " " + mp.lastName;
+ }
+
+ document.getElementById("progress").textContent=
+ (current+1)+" / "+quizData.length;
+
+ document.getElementById("answer").value="";
+}
+
+function submitAnswer(){
+
+ let mp=quizData[current];
+
+ let answer=
+ document.getElementById("answer").value.trim();
+
+ let correct=
+ mode==="lastname"
+ ? mp.lastName
+ : mp.party;
+
+ if(answer===correct){
+   score++;
+ }
+
+ current++;
+
+ if(current>=quizData.length){
+
+   document.getElementById("quiz").style.display="none";
+   document.getElementById("results").style.display="block";
+
+   document.getElementById("score").textContent=
+   score + " / " + quizData.length;
+
+   return;
+ }
+
+ loadQuestion();
+}
+
+</script>
+
+</body>
+</html>
