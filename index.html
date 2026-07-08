@@ -67,6 +67,14 @@
             20 Random MPs
         </button>
 
+        
+        <h2>Same Surname Challenge</h2>
+        
+        <button onclick="startQuiz('surnamechallenge', false)">
+            All Shared-Surname MPs
+        </button>
+
+
     </div>
 
     <div id="quiz">
@@ -77,13 +85,27 @@
 
         <div id="nameDisplay"></div>
 
+        
         <input id="answer" type="text">
+        
+        <input
+            id="constituencyAnswer"
+            type="text"
+            placeholder="Constituency"
+            style="display:none">
+
 
         <br>
 
         <button onclick="submitAnswer()">
             Submit
         </button>
+
+        
+        <button onclick="goHome()">
+            Home
+        </button>
+
 
         <p id="progress"></p>
 
@@ -95,9 +117,11 @@
 
         <p id="score"></p>
 
-        <button onclick="location.reload()">
-            Play Again
+        
+        <button onclick="goHome()">
+            Return to Home Screen
         </button>
+
 
     </div>
 
@@ -110,6 +134,22 @@
         let score = 0;
         let mode = "lastname";
 
+        
+        
+        function goHome() {
+        
+            current = 0;
+            score = 0;
+            quizData = [];
+        
+            document.getElementById("quiz").style.display = "none";
+            document.getElementById("results").style.display = "none";
+            document.getElementById("menu").style.display = "block";
+        
+            document.getElementById("answer").value = "";
+        }
+
+        
         function shuffle(array) {
 
             let arr = [...array];
@@ -124,11 +164,38 @@
             return arr;
         }
 
+        
+        function getSharedSurnameMPs() {
+        
+            const counts = {};
+        
+            MPs.forEach(mp => {
+                counts[mp.lastName] =
+                    (counts[mp.lastName] || 0) + 1;
+            });
+        
+            return MPs.filter(mp =>
+                counts[mp.lastName] > 1
+            );
+        }
+        
+
         function startQuiz(selectedMode, random20) {
 
             mode = selectedMode;
 
-            quizData = shuffle(MPs);
+            
+            if (selectedMode === "surnamechallenge") {
+            
+                quizData =
+                    shuffle(getSharedSurnameMPs());
+            
+            } else {
+            
+                quizData = shuffle(MPs);
+            
+            }
+
 
             if (random20) {
                 quizData = quizData.slice(0, 20);
@@ -145,6 +212,10 @@
 
         function loadQuestion() {
 
+            document.getElementById(
+                "constituencyAnswer"
+            ).style.display = "none";
+            
             let mp = quizData[current];
 
             document.getElementById("photo").src = mp.photo;
@@ -156,7 +227,23 @@
 
                 document.getElementById("nameDisplay").textContent = "";
 
-            } else {
+            }   else if (mode === "surnamechallenge") {
+            
+                document.getElementById("questionTitle")
+                    .textContent =
+                    "Enter the MP's full name and constituency";
+            
+                document.getElementById("nameDisplay")
+                    .textContent = "";
+            
+                document.getElementById("answer")
+                    .placeholder = "Full Name";
+            
+                document.getElementById(
+                    "constituencyAnswer"
+                ).style.display = "inline-block";
+                
+            }   else {
 
                 document.getElementById("questionTitle").textContent =
                     "Type the MP's Party";
@@ -169,6 +256,10 @@
                 "Question " + (current + 1) + " of " + quizData.length;
 
             document.getElementById("answer").value = "";
+
+            document.getElementById(
+                "constituencyAnswer"
+            ).value = "";
         }
 
         function submitAnswer() {
@@ -186,9 +277,61 @@
                 correct = mp.party;
             }
 
-            if (answer === correct) {
-                score++;
+            console.log("Answer:", answer);
+            console.log("Correct:", correct);
+
+            
+            if (mode === "surnamechallenge") {
+
+                let nameAnswer =
+                    document.getElementById("answer")
+                        .value
+                        .trim()
+                        .toLowerCase();
+            
+                let constituencyAnswer =
+                    document.getElementById(
+                        "constituencyAnswer"
+                    )
+                    .value
+                    .trim()
+                    .toLowerCase();
+
+            
+                let correctName =
+                    (
+                        mp.firstName +
+                        " " +
+                        mp.lastName
+                    )
+                    .toLowerCase();
+            
+                let correctConstituency =
+                    mp.constituency.toLowerCase();
+
+                console.log("Name Answer:", nameAnswer);
+                console.log("Name Correct:", correctName);
+                console.log("Constituency Answer:", constituencyAnswer);
+                console.log("Constituency Correct:", correctConstituency);
+            
+                if (
+                    nameAnswer === correctName &&
+                    constituencyAnswer ===
+                        correctConstituency
+                ) {
+                    score++;
+                }
+            
+            } else {
+            
+                if (
+                    answer.trim().toLowerCase() ===
+                    correct.trim().toLowerCase()
+                ) {
+                    score++;
+                }
             }
+
 
             current++;
 
@@ -211,3 +354,4 @@
 </body>
 
 </html>
+
