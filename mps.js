@@ -4,7 +4,7 @@ const MPs = [
    "lastName": "Aboultaif",
    "constituency": "Edmonton Manning",
    "party": "Conservative",
-   "photo": "https://www.ourcommons.ca/CommonElementsV2/Images/ce-hoc-emblem-e.png\\nhttps://www.ourcommons.ca/Content/Parliamentarians/Images/OfficialMPPhotos/45/AboultaifZiad_CPC.jpg"
+   "photo": "https://www.ourcommons.ca/Content/Parliamentarians/Images/OfficialMPPhotos/45/AboultaifZiad_CPC.jpg"
  },
  {
    "firstName": "Sima",
@@ -2384,6 +2384,7 @@ const MPs = [
    "lastName": "Zuberi",
    "constituency": "Pierrefonds—Dollard",
    "party": "Liberal",
-   "photo": "https://www.ourcommons.ca/Content/Parliamentarians/Images/OfficialMPPhotos/45/ZuberiSameer_Lib.jpg'"
+   "photo": "https://www.ourcommons.ca/Content/Parliamentarians/Images/OfficialMPPhotos/45/ZuberiSameer_Lib.jpg"
  }
+ 
 ];
