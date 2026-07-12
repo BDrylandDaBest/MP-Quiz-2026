@@ -8,7 +8,7 @@
 
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: Georgia, serif;
             text-align: center;
             padding: 20px;
         }
@@ -97,8 +97,17 @@
 
         <br>
 
-        <button onclick="submitAnswer()">
+        <!-- Feedback text -->
+        <p id="feedback" style="font-size: 1.2em; font-weight: bold;"></p>
+
+        <!-- Give the submit button an ID -->
+        <button id="submitBtn" onclick="submitAnswer()">
             Submit
+        </button>
+
+        <!-- Add a hidden Next button -->
+        <button id="nextBtn" onclick="nextQuestion()" style="display:none;">
+            Next Question
         </button>
 
         
@@ -260,92 +269,75 @@
             document.getElementById(
                 "constituencyAnswer"
             ).value = "";
+
+            document.getElementById("feedback").textContent = "";
+            document.getElementById("submitBtn").style.display = "inline-block";
+            document.getElementById("nextBtn").style.display = "none";
         }
 
         function submitAnswer() {
+                    let mp = quizData[current];
+                    let isCorrect = false;
+                    let correctString = "";
+        
+                    // Evaluate Surname Challenge Mode
+                    if (mode === "surnamechallenge") {
+                        let nameAnswer = document.getElementById("answer").value.trim().toLowerCase();
+                        let constituencyAnswer = document.getElementById("constituencyAnswer").value.trim().toLowerCase();
+                    
+                        let correctName = (mp.firstName + " " + mp.lastName).toLowerCase();
+                        let correctConstituency = mp.constituency.toLowerCase();
+        
+                        // Format the correct answer for the user to see if they get it wrong
+                        correctString = mp.firstName + " " + mp.lastName + " (" + mp.constituency + ")";
+                    
+                        if (nameAnswer === correctName && constituencyAnswer === correctConstituency) {
+                            isCorrect = true;
+                        }
+                    } 
+                    // Evaluate Last Name or Party Modes
+                    else {
+                        let answer = document.getElementById("answer").value.trim();
+                        
+                        if (mode === "lastname") {
+                            correctString = mp.lastName;
+                        } else {
+                            correctString = mp.party;
+                        }
+        
+                        if (answer.toLowerCase() === correctString.toLowerCase()) {
+                            isCorrect = true;
+                        }
+                    }
+        
+                    // Display Feedback
+                    let feedbackEl = document.getElementById("feedback");
+                    if (isCorrect) {
+                        score++;
+                        feedbackEl.textContent = "Correct!";
+                        feedbackEl.style.color = "green";
+                    } else {
+                        feedbackEl.textContent = "Wrong! The correct answer is: " + correctString;
+                        feedbackEl.style.color = "red";
+                    }
+        
+                    // Hide Submit button, show Next Question button
+                    document.getElementById("submitBtn").style.display = "none";
+                    document.getElementById("nextBtn").style.display = "inline-block";
+        }
 
-            let mp = quizData[current];
-
-            let answer =
-                document.getElementById("answer").value.trim();
-
-            let correct;
-
-            if (mode === "lastname") {
-                correct = mp.lastName;
-            } else {
-                correct = mp.party;
-            }
-
-            console.log("Answer:", answer);
-            console.log("Correct:", correct);
-
-            
-            if (mode === "surnamechallenge") {
-
-                let nameAnswer =
-                    document.getElementById("answer")
-                        .value
-                        .trim()
-                        .toLowerCase();
-            
-                let constituencyAnswer =
-                    document.getElementById(
-                        "constituencyAnswer"
-                    )
-                    .value
-                    .trim()
-                    .toLowerCase();
-
-            
-                let correctName =
-                    (
-                        mp.firstName +
-                        " " +
-                        mp.lastName
-                    )
-                    .toLowerCase();
-            
-                let correctConstituency =
-                    mp.constituency.toLowerCase();
-
-                console.log("Name Answer:", nameAnswer);
-                console.log("Name Correct:", correctName);
-                console.log("Constituency Answer:", constituencyAnswer);
-                console.log("Constituency Correct:", correctConstituency);
-            
-                if (
-                    nameAnswer === correctName &&
-                    constituencyAnswer ===
-                        correctConstituency
-                ) {
-                    score++;
-                }
-            
-            } else {
-            
-                if (
-                    answer.trim().toLowerCase() ===
-                    correct.trim().toLowerCase()
-                ) {
-                    score++;
-                }
-            }
-
-
+        function nextQuestion() {
             current++;
 
+            // Check if quiz is over
             if (current >= quizData.length) {
-
                 document.getElementById("quiz").style.display = "none";
                 document.getElementById("results").style.display = "block";
-
-                document.getElementById("score").textContent =
-                    score + " / " + quizData.length;
-
+                document.getElementById("score").textContent = score + " / " + quizData.length;
                 return;
             }
 
+            // Otherwise load the next question
             loadQuestion();
         }
 
@@ -354,4 +346,3 @@
 </body>
 
 </html>
-
